@@ -1,18 +1,18 @@
 # Template file for 'dendrite'
 pkgname=dendrite
-version=0.11.0
+version=0.13.3
 revision=1
 build_style=go
 go_import_path="github.com/matrix-org/dendrite"
-go_package="./cmd/create-account ./cmd/dendrite-monolith-server
- ./cmd/generate-config ./cmd/generate-keys"
-short_desc="Dendrite is a second-generation Matrix homeserver written in Go"
+go_package="./cmd/create-account ./cmd/dendrite ./cmd/generate-config
+ ./cmd/generate-keys"
+short_desc="Second-generation Matrix homeserver"
 maintainer="Joel Beckmeyer <joel@beckmeyer.us>"
 license="Apache-2.0"
 homepage="https://matrix.org/docs/projects/server/dendrite"
 changelog="https://raw.githubusercontent.com/matrix-org/dendrite/main/CHANGES.md"
 distfiles="https://github.com/matrix-org/dendrite/archive/v${version}.tar.gz"
-checksum=d79ab86c66e6df5a310d28ef59c9207ebeb00ef694f3ec7822f06680c195922f
+checksum=8840730ede16cc7e150344f5cdaa5f78d6abaa8aa3c588ec39c20d735bcf5dd7
 
 system_accounts="_dendrite"
 _dendrite_homedir="/var/lib/dendrite"
@@ -25,11 +25,11 @@ make_dirs="
 pre_configure() {
 	vsed -e 's,\./logs,/var/log/dendrite,' \
 	 -e 's,: matrix_key.pem,: /etc/dendrite/matrix_key.pem,' \
-	 -i dendrite-sample.monolith.yaml
+	 -i dendrite-sample.yaml
 }
 
 post_install() {
-	vsconf dendrite-sample.monolith.yaml
+	vsconf dendrite-sample.yaml
 	vsv dendrite-monolith-server
 
 	cd "${DESTDIR}"/usr/bin

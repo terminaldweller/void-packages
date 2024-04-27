@@ -1,16 +1,16 @@
 # Template file for 'wmenu'
 pkgname=wmenu
-version=0.1.1
+version=0.1.6
 revision=1
 build_style=meson
 hostmakedepends="pkg-config scdoc wayland-devel"
 makedepends="pango-devel wayland-devel libxkbcommon-devel wayland-protocols"
 short_desc="Dmenu for wayland"
-maintainer="Subhaditya Nath <sn03.general@gmail.com>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="MIT"
 homepage="https://sr.ht/~adnano/wmenu/"
 distfiles="https://git.sr.ht/~adnano/wmenu/archive/${version}.tar.gz"
-checksum=8df589c081cf56b926fb413a152532ce6835317a4dc7b5c69c70ab32c54a5359
+checksum=0684739e6339ffad6562338a4bf67e29bf18688d1a9b0ddf31b693a64d29efac
 
 post_install() {
 	vlicense LICENSE

@@ -1,6 +1,6 @@
 # Template file for 'riff'
 pkgname=riff
-version=2.22.2
+version=3.1.0
 revision=1
 build_style=cargo
 short_desc="Diff filter highlighting which line parts have changed"
@@ -8,7 +8,15 @@ maintainer="0x5c <dev@0x5c.io>"
 license="MIT"
 homepage="https://github.com/walles/riff"
 distfiles="https://github.com/walles/riff/archive/refs/tags/${version}.tar.gz"
-checksum=7624e73d968d41133edc095b78ba49a19084933ff46f375864fed89fcf7c3e86
+checksum=71814d6f5bbe1e039c89333bec2131c1b56f4000796fcdab3026ff6820ce59a3
+
+post_patch() {
+	# Needed to prevent a rebuilt in do_install()
+	# These are already transitive deps at those versions, but cargo
+	# miscalculates that a feature is dropped when installing.
+	cargo add syn@1.0.48 --features full
+	cargo add libc@0.2.140 --features extra_traits
+}
 
 post_install() {
 	vlicense LICENSE

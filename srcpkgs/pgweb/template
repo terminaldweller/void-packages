@@ -1,6 +1,6 @@
 # Template file for 'pgweb'
 pkgname=pgweb
-version=0.13.1
+version=0.15.0
 revision=1
 build_style=go
 go_import_path="github.com/sosedoff/pgweb"
@@ -10,7 +10,7 @@ license="MIT"
 homepage="https://sosedoff.github.io/pgweb"
 changelog="https://github.com/sosedoff/pgweb/raw/master/CHANGELOG.md"
 distfiles="https://github.com/sosedoff/pgweb/archive/v${version}.tar.gz"
-checksum=5b2343c96d5e095f1596bba22e97e695e39eed0dccac1ff21f993e7b6b34d380
+checksum=fb8c324d8c7c6efd144cdb977b30eb0ec2b2051b23c97ab6a7a2be578e1247b9
 
 post_install() {
 	vdoc README.md

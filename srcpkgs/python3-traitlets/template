@@ -1,22 +1,21 @@
 # Template file for 'python3-traitlets'
 pkgname=python3-traitlets
-version=5.5.0
+version=5.14.2
 revision=1
 build_style=python3-pep517
-hostmakedepends="python3-flit_core hatchling"
-depends="python3-decorator python3-ipython_genutils python3-six"
-checkdepends="$depends python3-pytest"
+# needs python3-pytest-mypy
+make_check_args="--ignore tests/test_typing.py"
+hostmakedepends="hatchling"
+depends="python3"
+checkdepends="python3-argcomplete python3-pytest-mock"
 short_desc="Configuration system for Python applications"
-maintainer="Orphaned <orphan@voidlinux.org>"
+maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="BSD-3-Clause"
 homepage="https://github.com/ipython/traitlets"
+changelog="https://raw.githubusercontent.com/ipython/traitlets/main/CHANGELOG.md"
 distfiles="${PYPI_SITE}/t/traitlets/traitlets-${version}.tar.gz"
-checksum=b122f9ff2f2f6c1709dab289a05555be011c87828e911c0cf4074b85cb780a79
-
-do_check() {
-	pytest
-}
+checksum=8cdd83c040dab7d1dee822678e5f5d100b514f7b72b01615b26fc5718916fdf9
 
 post_install() {
-	vlicense COPYING.md LICENSE
+	vlicense LICENSE
 }

@@ -1,20 +1,22 @@
 # Template file for 'docker-compose'
 pkgname=docker-compose
-version=2.15.1
+version=2.26.1
 revision=1
 build_style=go
-go_import_path="github.com/docker/compose/v2/cmd"
-go_ldflags="-X github.com/docker/compose/v2/internal.Version=v${version}"
+go_import_path="github.com/docker/compose/v2"
+go_package="${go_import_path}/cmd"
+go_ldflags="-X ${go_import_path}/internal.Version=v${version}"
 depends="docker-cli"
 short_desc="Tool to define and run multi-container Docker applications"
-maintainer="Michal Vasilek <michal@vasilek.cz>"
+maintainer="Filip Rojek <filip@filiprojek.cz>"
 license="Apache-2.0"
 homepage="https://docs.docker.com/compose/"
+changelog="https://github.com/docker/compose/releases"
 distfiles="https://github.com/docker/compose/archive/refs/tags/v${version}.tar.gz"
-checksum=8ace5441826c6f07f5aa12c1864f73d30a362703492d9ed4b2e2314d3b353b1b
+checksum=081ad40241f8e144cad088a65e6fd0ec588e3d36931e5baabb3dc5ab068ceb60
 
 post_install() {
-	mkdir -p ${DESTDIR}/usr/libexec/docker/cli-plugins
+	vmkdir usr/libexec/docker/cli-plugins
 	mv ${DESTDIR}/usr/bin/cmd ${DESTDIR}/usr/libexec/docker/cli-plugins/docker-compose
 	ln -s /usr/libexec/docker/cli-plugins/docker-compose ${DESTDIR}/usr/bin/docker-compose
 }

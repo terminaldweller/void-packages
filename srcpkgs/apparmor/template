@@ -1,33 +1,30 @@
 # Template file for 'apparmor'
 pkgname=apparmor
-version=3.1.2
-revision=1
+version=3.1.6
+revision=2
 build_wrksrc=libraries/libapparmor
 build_style=gnu-configure
 conf_files="/etc/apparmor.d/local/* /etc/apparmor/*"
 make_dirs="/etc/apparmor.d/disable 0755 root root"
-hostmakedepends="bison flex autoconf automake libtool gettext swig python3 which
- python3-setuptools"
-makedepends="perl python3-devel"
+hostmakedepends="bison flex gettext python3 which python3-setuptools pkg-config
+ perl"
 depends="runit-void-apparmor libapparmor-${version}_${revision} python3-notify2
  python3-psutil python3-dbus iproute2"
 checkdepends="dejagnu"
 short_desc="Mandatory access control to restrict programs"
-maintainer="Michal Vasilek <michal@vasilek.cz>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-2.0-only"
 homepage="https://gitlab.com/apparmor/apparmor"
 changelog="https://gitlab.com/apparmor/apparmor/-/wikis/Release_Notes_${version}"
-distfiles="https://gitlab.com/apparmor/apparmor/-/archive/v${version}/apparmor-v${version}.tar.gz"
-checksum=e7c7c4bc3a05a074322f9a19232c925b37e9a23dffa66d764dc27ebb82f0462c
+distfiles="https://launchpad.net/apparmor/${version%.*}/${version}/+download/apparmor-${version}.tar.gz"
+checksum=d5d699fd43faffd924dd51bfb5781a5a7cbabb55c1c9cb4abfb8c2840a9e8fcd
 replaces="apparmor-vim>=0"
 
 if [ -z "$CROSS_BUILD" ]; then
 	configure_args="--with-perl --with-python"
+	hostmakedepends+=" swig"
+	makedepends="python3-devel"
 fi
-
-pre_configure() {
-	autoreconf -if
-}
 
 pre_build() {
 	# Replace release profiles with our own
@@ -66,6 +63,7 @@ post_install() {
 	rm ${DESTDIR}/etc/apparmor.d/{,local/}php-fpm
 
 	vinstall utils/aa-notify.desktop 644 usr/share/applications
+	vdoc "${FILESDIR}/README.voidlinux"
 }
 
 libapparmor_package() {

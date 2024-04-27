@@ -1,7 +1,8 @@
 # Template file for 'vim'
 pkgname=vim
-version=9.0.0948
+version=9.1.0104
 revision=1
+create_wrksrc=required
 hostmakedepends="gettext glib-devel pkg-config"
 makedepends="acl-devel ncurses-devel
  $(vopt_if x11 libXt-devel)
@@ -14,7 +15,7 @@ maintainer="Leah Neukirchen <leah@vuxu.org>"
 license="Vim"
 homepage="https://www.vim.org"
 distfiles="https://github.com/vim/vim/archive/v${version}.tar.gz"
-checksum=f0d98cf3005045363066373c6070076f5feaca8de1d34c2d501abc59e90bbc41
+checksum=90721c0d3cc9ddbdce3989e8a03c6c14f9d214f3e12e062044793cbd43e10a19
 python_version=3
 
 build_options="x11 gtk3 huge"
@@ -33,10 +34,10 @@ _subdirs="$(vopt_if x11 vim-x11) $(vopt_if gtk3 gvim)
 alternatives="vim:vim:/usr/bin/vim-normal"
 
 pre_configure() {
-	for f in ${_subdirs}; do
-		mkdir -p /tmp/${f}
-		cp -a $wrksrc/* /tmp/${f}
-		mv /tmp/${f} $wrksrc/${f}
+	local f
+	for f in vim-normal ${_subdirs}; do
+		rm -rf ${f}
+		cp -r vim-${version} ${f}
 	done
 }
 
@@ -59,7 +60,7 @@ do_configure() {
 	fi
 
 	# Normal version.
-	cd $wrksrc
+	cd $wrksrc/vim-normal
 	./configure ${configure_args} ${args} ${nohuge_args} --disable-xim --enable-gui=no --with-x=no
 
 	# X11 version.
@@ -79,7 +80,8 @@ do_configure() {
 		cd $wrksrc/vim-huge
 		./configure ${configure_args} ${args} --with-x=yes --enable-gui=no \
 			--with-features=huge --enable-perlinterp --enable-python3interp \
-			--enable-rubyinterp --enable-luainterp --enable-terminal
+			--enable-rubyinterp --enable-luainterp --enable-terminal \
+			--with-python3-stable-abi=3.12
 		if [ "$build_option_gtk3" ]; then
 
 			cd $wrksrc/gvim-huge
@@ -88,16 +90,13 @@ do_configure() {
 				--with-vim-name=gvim-huge --with-features=huge \
 				--enable-perlinterp --enable-python3interp \
 				--enable-rubyinterp --enable-luainterp \
-				--enable-terminal
+				--enable-terminal --with-python3-stable-abi=3.12
 		fi
 	fi
 }
 
 do_build() {
-	cd $wrksrc
-	make ${makejobs}
-
-	for f in ${_subdirs}; do
+	for f in vim-normal ${_subdirs}; do
 		cd $wrksrc/$f
 		make ${makejobs}
 	done
@@ -105,11 +104,12 @@ do_build() {
 }
 
 do_check() {
-	cd $wrksrc
+	cd $wrksrc/vim-normal
 	TERM=xterm make test
 }
 
 do_install() {
+	cd $wrksrc/vim-normal
 	make DESTDIR=$DESTDIR install
 	vlicense runtime/doc/uganda.txt LICENSE
 

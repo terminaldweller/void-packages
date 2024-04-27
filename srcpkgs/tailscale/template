@@ -1,19 +1,21 @@
 # Template file for 'tailscale'
 pkgname=tailscale
-version=1.36.0
+version=1.64.2
 revision=1
 build_style=go
 go_import_path="tailscale.com"
 go_package="tailscale.com/cmd/tailscale tailscale.com/cmd/tailscaled"
 go_build_tags='xversion'
-go_ldflags="-X 'tailscale.com/version.Long=${version}_${revision} (Void Linux)' -X 'tailscale.com/version.Short=${version}'"
+go_ldflags="-X 'tailscale.com/version.longStamp=${version}_${revision} (Void Linux)'
+ -X 'tailscale.com/version.shortStamp=${version}'"
 make_dirs="/var/lib/tailscale 0755 root root"
 short_desc="Easy, secure, cross platform WireGuard, oauth2, and 2FA/SSO"
-maintainer="Noel Cower <ncower@nil.dev>"
+maintainer="classabbyamp <void@placeviolette.net>"
 license="BSD-3-Clause"
 homepage="https://tailscale.com"
+changelog="https://github.com/tailscale/tailscale/releases"
 distfiles="https://github.com/tailscale/tailscale/archive/v${version}.tar.gz"
-checksum=25b293a7e65d7b962f0c56454d66fa56c89c3aa995467218f24efa335b924c76
+checksum=e5e46f6b6b716b2c4696dce0b92dc2e36f02b06b7ad9f055042a820ad61b2a47
 
 post_install() {
 	vlicense LICENSE

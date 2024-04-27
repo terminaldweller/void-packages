@@ -1,6 +1,6 @@
 # Template file for 'swirc'
 pkgname=swirc
-version=3.3.9
+version=3.4.7
 revision=1
 build_style=configure
 configure_args="$(vopt_with notify libnotify)"
@@ -8,16 +8,16 @@ make_build_args="PREFIX=/usr"
 make_check_args="PREFIX=/usr"
 make_install_args="PREFIX=/usr"
 hostmakedepends="gettext-devel-tools pkg-config which"
-makedepends="gettext-devel libcurl-devel libidn-devel ncurses-devel openssl-devel
- $(vopt_if notify libnotify-devel)"
+makedepends="gettext-devel hunspell-devel libcurl-devel libidn-devel
+ ncurses-devel openssl-devel $(vopt_if notify libnotify-devel)"
 checkdepends="cmocka-devel"
 short_desc="Curses ICB and IRC client"
-maintainer="Markus Uhlin <markus.uhlin@bredband.net>"
+maintainer="Markus Uhlin <markus@nifty-networks.net>"
 license="BSD-3-Clause, ISC, MIT"
 homepage="https://www.nifty-networks.net/swirc"
 changelog="https://raw.githubusercontent.com/uhlin/swirc/master/CHANGELOG.md"
-distfiles="https://www.nifty-networks.net/swirc/releases/${pkgname}-${version}.tgz"
-checksum=4326dcf521d2a0ca3c55ed289fea0c0d1a289dcc158c80f4aee207ff2085ab37
+distfiles="https://www.nifty-networks.net/swirc/releases/swirc-${version}.tgz"
+checksum=9341f077af1d74e161a853791fa9db172ab5258e9b031ff9091c453f948aae98
 
 build_options="notify"
 build_options_default="notify"
@@ -29,8 +29,16 @@ post_configure() {
 		msg_error "cannot find $_file\n"
 	fi
 
-	vsed -i "$_file" -e "s/CC=/CC?=/"
-	vsed -i "$_file" -e "s/CXX=/CXX?=/"
+	vsed -i "$_file" -e "s/CC =/CC ?=/"
+	vsed -i "$_file" -e "s/CXX =/CXX ?=/"
+	vsed -i "$_file" -e "s/LDFLAGS =/LDFLAGS ?=/"
+}
+
+do_check() {
+	# The usage of the "-Wl,-z,now" and "-Wl,-z,relro" LDFLAGS
+	# results in linking errors and are disabled during "make
+	# check".
+	LDFLAGS="-L/usr/local/lib" make check
 }
 
 post_check() {

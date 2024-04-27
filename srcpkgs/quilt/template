@@ -1,25 +1,26 @@
 # Template file for 'quilt'
 pkgname=quilt
-version=0.66
-revision=3
+version=0.68
+revision=1
 build_style=gnu-configure
-configure_args="--without-rpmbuild --with-bash=/bin/bash"
-hostmakedepends="perl"
+configure_args="--without-rpmbuild --with-bash=/bin/bash
+ --with-date=/bin/date --with-awk=/bin/awk --with-sed=/bin/sed
+ --with-column=/usr/bin/column"
+make_install_args='BUILD_ROOT=$(DESTDIR)'
+make_install_target='install-main'
+hostmakedepends="perl ed tar"
 # quilt is a bash script.
 # All quilt's users use quilt-refresh, which requires perl
 depends="patch perl bash"
 short_desc="Tool for Working with Many Patches"
-maintainer="Orphaned <orphan@voidlinux.org>"
+maintainer="Đoàn Trần Công Danh <congdanhqx@gmail.com>"
 license="GPL-2.0-only"
 homepage="http://savannah.nongnu.org/projects/quilt"
 distfiles="http://download.savannah.gnu.org/releases/quilt/quilt-${version}.tar.gz"
-checksum=314b319a6feb13bf9d0f9ffa7ce6683b06919e734a41275087ea457cc9dc6e07
+distfiles="http://download-mirror.savannah.gnu.org/releases/quilt/quilt-${version}.tar.gz"
+checksum=fe8c09de03c106e85b3737c8f03ade147c956b79ed7af485a1c8a3858db38426
 
-do_install() {
-	make BUILD_ROOT=\"$DESTDIR\" install
-
-	vmkdir usr/share/bash-completion/completions
-	mv ${DESTDIR}/etc/bash_completion.d/* ${DESTDIR}/usr/share/bash-completion/completions
-	# For sanity
-	rm -f ${DESTDIR}/usr/share/quilt/compat/{awk,bash,column}
+post_patch() {
+	vsed -i 's;[$](etcdir)/bash_completion.d;$(datadir)/bash-completion/completions;g' \
+		Makefile.in
 }

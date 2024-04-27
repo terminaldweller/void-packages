@@ -1,18 +1,19 @@
 # Template file for 'fuzzel'
 pkgname=fuzzel
-version=1.8.2
+version=1.10.2
 revision=1
 build_style=meson
+configure_args="-Dsvg-backend=librsvg"
 hostmakedepends="pkg-config scdoc wayland-devel"
 makedepends="cairo-devel fcft-devel librsvg-devel libpng-devel
  libxkbcommon-devel pixman-devel tllist wayland-devel wayland-protocols"
 short_desc="Application launcher for wlroots based Wayland compositors"
-maintainer="Isaac Freund <mail@isaacfreund.com>"
+maintainer="Marcin Puc <tranzystorek.io@protonmail.com>"
 license="MIT"
 homepage="https://codeberg.org/dnkl/fuzzel"
 changelog="https://codeberg.org/dnkl/fuzzel/raw/branch/master/CHANGELOG.md"
 distfiles="https://codeberg.org/dnkl/fuzzel/archive/${version}.tar.gz"
-checksum=2e7debba9d56a989921e0ce518a026152d9fbea33abafe384a4aad074db89de8
+checksum=5362175f301af3f27c23138ac339294ce33dff61720ffc7eb13e78ec56f60a8b
 
 post_install() {
 	rm "${PKGDESTDIR}/usr/share/doc/fuzzel/CHANGELOG.md"

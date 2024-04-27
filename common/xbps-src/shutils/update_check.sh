@@ -8,15 +8,23 @@ update_check() {
     local urlpfx urlsfx
     local -A fetchedurls
 
+    local curlargs=(
+        -A "xbps-src-update-check/$XBPS_SRC_VERSION"
+        --max-time 10 --compressed -Lsk
+   )
+
+    # XBPS_UPDATE_CHECK_VERBOSE is the old way to show verbose messages
+    [ "$XBPS_UPDATE_CHECK_VERBOSE" ] && XBPS_VERBOSE="$XBPS_UPDATE_CHECK_VERBOSE"
+
     if [ -r $update_override ]; then
         . $update_override
-        if [ "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-            echo "using $XBPS_TARGET_PKG/update overrides" 1>&2
+        msg_verbose "using $XBPS_TARGET_PKG/update overrides\n"
+        if [ -n "$disabled" ]; then
+            msg_verbose "update-check DISABLED for $original_pkgname: $disabled\n"
+            return 0
         fi
     elif [ -z "$distfiles" ]; then
-        if [ "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-            echo "NO DISTFILES found for $original_pkgname" 1>&2
-        fi
+        msg_verbose "NO DISTFILES found for $original_pkgname\n"
         return 0
     fi
 
@@ -71,6 +79,7 @@ update_check() {
               *crates.io*|\
               *codeberg.org*|\
               *hg.sr.ht*|\
+              *software.sil.org*|\
               *git.sr.ht*)
                 continue
                 ;;
@@ -89,11 +98,9 @@ update_check() {
         esac
         if [ "$rx" ]; then
             # substitute url if needed
-            if [ -n "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-                echo "(folder) fetching $urlpfx and scanning with $rx" 1>&2
-            fi
+            msg_verbose "(folder) fetching $urlpfx and scanning with $rx\n"
             skipdirs=
-            curl -A "xbps-src-update-check/$XBPS_SRC_VERSION" --max-time 10 -Lsk "$urlpfx" |
+            curl "${curlargs[@]}" "$urlpfx" |
                 grep -Po -i "$rx" |
                 # sort -V places 1.1/ before 1/, but 1A/ before 1.1A/
                 sed -e 's:$:A:' -e 's:/A$:A/:' | sort -Vru | sed -e 's:A/$:/A:' -e 's:A$::' |
@@ -116,7 +123,7 @@ update_check() {
                 pkgurlname="$(printf %s "$url" | cut -d/ -f5)"
                 url="https://sourceforge.net/projects/$pkgurlname/rss?limit=200";;
             *code.google.com*|*googlecode*)
-                url="http://code.google.com/p/$pkgname/downloads/list";;
+                url="https://code.google.com/p/$pkgname/downloads/list";;
             *launchpad.net*)
                 pkgurlname="$(printf %s "$url" | cut -d/ -f4)"
                 url="https://launchpad.net/$pkgurlname/+download";;
@@ -125,24 +132,25 @@ update_check() {
             *pythonhosted.org*)
                 pkgname=${pkgname#python-}
                 pkgname=${pkgname#python3-}
+                rx="(?<=${pkgname//-/[-_]}-)[0-9.]+(post[0-9]*)?(?=(([.]tar|-cp|-py[0-9]+-none)))"
                 url="https://pypi.org/simple/$pkgname";;
             *github.com*)
                 pkgurlname="$(printf %s "$url" | cut -d/ -f4,5)"
                 url="https://github.com/$pkgurlname/tags"
-                rx='/archive/refs/tags/(v?|\Q'"$pkgname"'\E-)?\K[\d.]+(?=\.tar\.gz")';;
+                rx='/archive/refs/tags/(v?|\Q'"$pkgname"'\E[-_])?\K[\d.]+(?=\.tar\.gz")';;
             *//gitlab.*|*code.videolan.org*)
                 case "$url" in
                     */-/*) pkgurlname="$(printf %s "$url" | sed -e 's%/-/.*%%g; s%/$%%')";;
                     *) pkgurlname="$(printf %s "$url" | cut -d / -f 1-5)";;
                 esac
-                url="$pkgurlname/tags"
-                rx='/archive/[^/]+/\Q'"$pkgname"'\E-v?\K[\d.]+(?=\.tar\.gz")';;
+                url="$pkgurlname/-/tags"
+                rx='/archive/[^/]+/\Q'"$pkgname"'\E-v?\K[\d.]+(?=\.tar\.gz)';;
             *bitbucket.org*)
                 pkgurlname="$(printf %s "$url" | cut -d/ -f4,5)"
                 url="https://bitbucket.org/$pkgurlname/downloads"
                 rx='/(get|downloads)/(v?|\Q'"$pkgname"'\E-)?\K[\d.]+(?=\.tar)';;
             *ftp.gnome.org*|*download.gnome.org*)
-                : ${pattern="\Q$pkgname\E-\K(0|[13]\.[0-9]*[02468]|[4-9][0-9]+)\.[0-9.]*[0-9](?=.tar)"}
+                : ${pattern="(?<=LATEST-IS-)([0-24-9]|3\.[0-9]*[02468]|[4-9][0-9]+)\.[0-9.]*[0-9](?=\")"}
                 url="https://download.gnome.org/sources/$pkgname/cache.json";;
             *archive.xfce.org*)
                 : ${pattern="\Q$pkgname\E-\K((([4-9]|([1-9][0-9]+))\.[0-9]*[02468]\.[0-9.]*[0-9])|([0-3]\.[0-9.]*))(?=.tar)"}
@@ -171,6 +179,18 @@ update_check() {
                 rx='<guid>\Q'"${url%/*}"'\E/(v-?|\Q'"$pkgname"'\E-)?\K[\d.]+(?=</guid>)' ;;
             *pkgs.fedoraproject.org*)
                 url="https://pkgs.fedoraproject.org/repo/pkgs/$pkgname" ;;
+            *software.sil.org/downloads/*)
+                pkgurlname=$(printf '%s\n' "$url" | cut -d/ -f6)
+                url="https://software.sil.org/$pkgurlname/download/"
+                pkgname="${pkgname#font-}"
+                pkgname="${pkgname#sil-}"
+                _pkgname="${pkgname//-/}"
+                rx="($_pkgname|${_pkgname}SIL)[_-]\K[0-9.]+(?=\.tar|\.zip)" ;;
+            *software.sil.org/*)
+                pkgname="${pkgname#font-}"
+                pkgname="${pkgname#sil-}"
+                _pkgname="${pkgname//-/}"
+                rx="($_pkgname|${_pkgname}SIL)[_-]\K[0-9.]+(?=\.tar|\.zip)" ;;
             esac
         fi
 
@@ -178,16 +198,12 @@ update_check() {
         rx=${rx:-'(?<!-)\b\Q'"$pkgname"'\E[-_]?((src|source)[-_])?v?\K([^-/_\s]*?\d[^-/_\s]*?)(?=(?:[-_.](?:src|source|orig))?\.(?:[jt]ar|shar|t[bglx]z|tbz2|zip))\b'}
 
         if [ "${fetchedurls[$url]}" ]; then
-            if [ -n "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-                echo "already fetched $url" 1>&2
-            fi
+            msg_verbose "already fetched $url\n"
             continue
         fi
 
-        if [ -n "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-            echo "fetching $url and scanning with $rx" 1>&2
-        fi
-        curl -H 'Accept: text/html,application/xhtml+xml,application/xml,text/plain,application/rss+xml' -A "xbps-src-update-check/$XBPS_SRC_VERSION" --max-time 10 -Lsk "$url" |
+        msg_verbose "fetching $url and scanning with $rx\n"
+        curl "${curlargs[@]}" -H 'Accept: text/html,application/xhtml+xml,application/xml,text/plain,application/rss+xml' "$url" |
             grep -Po -i "$rx"
         fetchedurls[$url]=yes
     done |
@@ -197,9 +213,7 @@ update_check() {
         grep . || echo "NO VERSION found for $original_pkgname" 1>&2
     } |
     while IFS= read -r found_version; do
-        if [ -n "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-            echo "found version $found_version"
-        fi
+        msg_verbose "found version $found_version\n"
         consider=true
         p="$ignore "
         while [ -n "$p" ]; do
@@ -208,9 +222,7 @@ update_check() {
             case "$found_version" in
             $i)
                 consider=false
-                if [ -n "$XBPS_UPDATE_CHECK_VERBOSE" ]; then
-                    echo "ignored $found_version due to $i"
-                fi
+                msg_verbose "ignored $found_version due to $i\n"
             esac
         done
         if $consider; then

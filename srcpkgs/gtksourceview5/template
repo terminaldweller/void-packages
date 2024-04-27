@@ -1,30 +1,39 @@
 # Template file for 'gtksourceview5'
 pkgname=gtksourceview5
-version=5.6.1
+version=5.12.0
 revision=1
 build_style=meson
 build_helper="gir"
-configure_args="-Dintrospection=$(vopt_if gir enabled disabled)
- $(vopt_bool gir vapi) $(vopt_bool gtk_doc gtk_doc)"
+configure_args="$(vopt_feature gir introspection) $(vopt_bool gir vapi)
+ $(vopt_bool gtk_doc documentation)"
 hostmakedepends="glib-devel itstool libxslt pkg-config gtk4 gettext
  $(vopt_if gir vala) $(vopt_if gtk_doc gi-docgen)"
 makedepends="gtk4-devel libglib-devel libxml2-devel $(vopt_if gir vala)
  pcre2-devel"
-checkdepends="xvfb-run mesa-dri cantarell-fonts"
+checkdepends="xvfb-run mesa-dri cantarell-fonts dbus"
 short_desc="Text widget that extends GTK4 GtkTextView widget"
-maintainer="Michal Vasilek <michal@vasilek.cz>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="LGPL-2.1-or-later"
 homepage="https://wiki.gnome.org/Projects/GtkSourceView"
-#changelog="https://gitlab.gnome.org/GNOME/gtksourceview/-/raw/master/NEWS"
-changelog="https://gitlab.gnome.org/GNOME/gtksourceview/-/raw/gtksourceview-5-6/NEWS"
+changelog="https://gitlab.gnome.org/GNOME/gtksourceview/-/raw/master/NEWS"
+#changelog="https://gitlab.gnome.org/GNOME/gtksourceview/-/raw/gtksourceview-5-8/NEWS"
 distfiles="${GNOME_SITE}/gtksourceview/${version%.*}/gtksourceview-${version}.tar.xz"
-checksum=659d9cc9d034a114f07e7e134ee80d77dec0497cb1516ae5369119c2fcb9da16
+checksum=daf32ff5d3150d6385917d3503a85b9e047ba158b2b03079314c9c00813fa01f
 make_check_pre="xvfb-run"
 
 # Package build options
 build_options="gir gtk_doc"
 desc_option_gtk_doc="Build API docs via gtk-doc"
 build_options_default="gir gtk_doc"
+
+pre_check() {
+	# machine-id is a random, non-zero value
+	echo 'dcb30309cd6c8b7cc20383d85a5c7012' > /etc/machine-id
+}
+
+post_check() {
+	rm /etc/machine-id
+}
 
 pre_build() {
 	# help gi-docgen find gi files on cross

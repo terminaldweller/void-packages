@@ -1,6 +1,6 @@
 # Template file for 'doomretro'
 pkgname=doomretro
-version=4.7.2
+version=5.2.1
 revision=1
 build_style=cmake
 hostmakedepends="pkg-config"
@@ -11,4 +11,4 @@ license="GPL-3.0-or-later"
 homepage="https://www.doomretro.com"
 changelog="https://raw.githubusercontent.com/bradharding/doomretro/master/releasenotes.md"
 distfiles="https://github.com/bradharding/doomretro/archive/v${version}.tar.gz"
-checksum=4da95e154adb6cbd6bab592b008c0441fc3fd75d80b3685a6221e5946a1cac51
+checksum=7b609343e68e56099bbb2862fc7fb576aef2a7433142accc88e78d32ff2fcb76

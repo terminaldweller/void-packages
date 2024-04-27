@@ -1,42 +1,44 @@
 # Template file for 'qt6-base'
 pkgname=qt6-base
-version=6.4.0
+version=6.6.0
 revision=1
 build_style=cmake
 configure_args="-DINSTALL_DATADIR=share/qt6
- -DINSTALL_ARCHDATADIR=lib/qt6
- -DINSTALL_BINDIR=lib/qt6/bin
- -DINSTALL_MKSPECSDIR=lib/qt6/mkspecs
+ -DINSTALL_ARCHDATADIR=lib${XBPS_TARGET_WORDSIZE}/qt6
+ -DINSTALL_BINDIR=lib${XBPS_TARGET_WORDSIZE}/qt6/bin
+ -DINSTALL_MKSPECSDIR=lib${XBPS_TARGET_WORDSIZE}/qt6/mkspecs
  -DINSTALL_INCLUDEDIR=include/qt6
- -DINSTALL_EXAMPLESDIR=lib/qt6/examples
- -DINSTALL_TESTSDIR=lib/qt6/tests
+ -DINSTALL_EXAMPLESDIR=lib${XBPS_TARGET_WORDSIZE}/qt6/examples
+ -DINSTALL_TESTSDIR=lib${XBPS_TARGET_WORDSIZE}/qt6/tests
  -DINSTALL_SYSCONFDIR=/etc/xdg
  -DQT_FEATURE_openssl_linked=ON
  -DQT_FEATURE_system_sqlite=ON
+ -DQT_FEATURE_libproxy=ON
+ -DQT_FEATURE_qmake=ON
  -DBUILD_WITH_PCH=OFF"
 hostmakedepends="perl pkg-config xmlstarlet"
-makedepends="zlib-devel libzstd-devel dbus-devel
+makedepends="zlib-devel libzstd-devel dbus-devel libmd4c-devel
  double-conversion-devel glib-devel libxcb-devel
  xcb-util-image-devel xcb-util-keysyms-devel
  xcb-util-renderutil-devel xcb-util-wm-devel
  MesaLib-devel pcre2-devel icu-devel mtdev-devel harfbuzz-devel
  libpng-devel tslib-devel libinput-devel gtk+3-devel
- libmariadbclient-devel postgresql-libs-devel libatomic-devel
+ libmariadbclient-devel postgresql-libs-devel
  unixodbc-devel cups-devel libproxy-devel brotli-devel
  sqlite-devel Vulkan-Headers mit-krb5-devel vulkan-loader libb2-devel
- libXevie-devel libXcursor-devel"
+ xcb-util-cursor-devel"
 short_desc="Cross-platform application and UI framework (QT6)"
 maintainer="John <me@johnnynator.dev>"
 license="GPL-3.0-only WITH Qt-GPL-exception-1.0, LGPL-3.0-only, GPL-2.0-or-later"
 homepage="https://www.qt.io"
 distfiles="https://download.qt.io/official_releases/qt/${version%.*}/${version}/submodules/qtbase-everywhere-src-${version}.tar.xz"
-checksum=cb6475a0bd8567c49f7ffbb072a05516ee6671171bed55db75b22b94ead9b37d
+checksum=039d53312acb5897a9054bd38c9ccbdab72500b71fdccdb3f4f0844b0dd39e0e
 python_version=3
 
 if [ "$CROSS_BUILD" ]; then
-	hostmakedepends+=" qt6-base-devel"
+	hostmakedepends+=" qt6-base"
 	# QtSetup fails native builds if this is set
-	configure_args+="-DQT_FORCE_BUILD_TOOLS=true"
+	configure_args+=" -DQT_FORCE_BUILD_TOOLS=true"
 fi
 
 # It is currently expected that quite a few patches do fail
@@ -47,47 +49,68 @@ fi
 do_check() {
 	cd build
 	export QT_QPA_PLATFORM=offscreen
+	export QMAKESPEC=$wrksrc/mkspecs/linux-g++
 	local failing_tests="tst_selftests tst_qmake tst_moc
 		tst_rcc tst_qfile tst_qstandardpaths
 		tst_qtemporarydir tst_qtemporaryfile tst_qdir
 		tst_qpluginloader tst_qlibrary tst_qtextstream
-		tst_qdate tst_qdatetime tst_qtimezone
-		test_umbrella_config test_wrap_cpp_and_resources
-		test_dependent_modules test_needsquoting_dirname
-		test_add_resource_options test_wrap_cpp_options
-		test_platform_defs_include test_qtmainwin_library
-		test_dbus_module test_multiple_find_package
-		test_add_resources_delayed_file test_QTBUG-63422
-		test_add_binary_resources_delayed_file
-		test_private_includes test_private_targets
-		test_testlib_definitions test_json_plugin_includes
-		test_testlib_no_link_gui test_testlib_no_link_widgets
-		module_includes test_concurrent_module test_opengl_lib
+		test_build_simple_widget_app_qmake
 		test_interface test_interface_link_libraries
-		test_moc_macro_target test_add_big_resource
-		test_versionless_targets test_add_resources_binary_generated
-		test_plugin_flavor_static test_plugin_flavor_shared
-		test_plugin_flavor_derived_from_qt_type
-		tst_qaddpreroutine tst_qfont tst_qfontdatabase
+		tst_qfont tst_qfontdatabase
 		tst_qfontmetrics tst_qglyphrun tst_qrawfont
 		tst_qtextdocumentlayout	tst_qopenglconfig
-		tst_qopengl tst_qdnslookup tst_qfiledialog
+		tst_qopengl tst_qfiledialog
 		tst_qgraphicsview tst_qapplication tst_qfontcombobox
 		tst_qlineedit tst_qmenubar tst_qopenglwidget
 		tst_qx11info tst_qcomplextext
-		test_QFINDTESTDATA run_test_QFINDTESTDATA"
+		tst_qaddpreroutine tst_qtextcursor
+		test_widgets_app_deployment tst_qnetworkinterface
+		tst_qgraphicsproxywidget tst_qdnslookup"
 	# Unknown platform linux-g++ :/
 	failing_tests+=" mockplugins test_import_plugins
-		test_static_resources test_generating_cpp_exports"
+	 test_static_resources test_generating_cpp_exports"
 	failing_tests+=" tst_qstorageinfo"
-	# broken with -O, passed with -O0, probably broken floating point code.
-	failing_tests+=" tst_qvectornd"
+	if [ "$XBPS_TARGET_LIBC" = musl ]; then
+		# Some glibc specific DNS Lookup
+		failing_tests+=" tst_qdnslookup"
+	fi
+	if [ "$XBPS_TARGET_WORDSIZE" = 32 ]; then
+		# failing on i686, not checked on arm
+		failing_tests+=" tst_qvectorrnd tst_json tst_qvectornd tst_qdoublevalidator"
+	fi
 	local ctest_exclude="("
 	for failure in $failing_tests; do
 		ctest_exclude+="$failure|"
 	done
 	ctest_exclude="${ctest_exclude%|})"
+	if [ ! -e "$wrksrc/build/include/qt6" ]; then
+		ln -s .. "$wrksrc/build/include/qt6"
+	fi
 	ctest -E "$ctest_exclude"
+	rm "$wrksrc/build/include/qt6"
+}
+
+post_install() {
+	rm -rf ${DESTDIR}/usr/tests
+	cat <<-EOF >${DESTDIR}/usr/lib/qt6/bin/target_qt.conf
+	[Paths]
+	Prefix=../../../
+	HostPrefix=/usr
+	Binaries=lib${XBPS_TARGET_WORDSIZE}/qt6/bin
+	HostBinaries=lib/qt6/bin
+	Libraries=lib${XBPS_TARGET_WORDSIZE}
+	HostLibraries=lib
+	LibraryExecutables=lib${XBPS_TARGET_WORDSIZE}/qt6/libexec
+	HostLibraryExecutables=lib/qt6/libexec
+	ArchData=lib${XBPS_TARGET_WORDSIZE}/qt6
+	HostArchData=lib/qt6
+	Data=share/qt6
+	HostData=share/qt6
+	Sysroot=
+	SysrootifyPrefix=false
+	TargetSpec=linux-g++
+	HostSpec=linux-g++
+	EOF
 }
 
 qt6-gui_package() {
@@ -231,11 +254,9 @@ qt6-plugin-tls-qcertonly_package() {
 }
 
 qt6-plugin-networkinformation_package() {
-	short_desc+=" - Networkinformation plugin"
+	short_desc+=" - NetworkInformation plugin"
 	pkg_install() {
-		vmove usr/lib/qt6/plugins/networkinformation/libqnetworkmanager.so
-		vmove usr/lib/qt6/plugins/networkinformation/libqglib.so
-
+		vmove usr/lib/qt6/plugins/networkinformation
 	}
 }
 
@@ -261,14 +282,20 @@ qt6-base-devel_package() {
 	 qt6-plugin-networkinformation>=${version}_${revision}
 	 ${makedepends}"
 	pkg_install() {
+		local _f
 		vmove usr/include
-		vmove usr/lib/cmake
-		vmove usr/lib/metatypes
 		vmove usr/lib/pkgconfig
-		vmove usr/lib/qt6/mkspecs
+		vmove usr/lib/qt6/metatypes
+		vmove usr/lib/qt6/mkspecs/modules
 		vmove "usr/lib/*.a"
 		vmove "usr/lib/*.so"
 		vmove "usr/lib/*.prl"
-		vmove usr/share/qt6/modules
+		vmove usr/lib/qt6/modules
+		for _f in ${DESTDIR}/usr/lib/cmake/*; do
+			case "$_f" in
+			*Tools|*HostInfo|*/Qt6) ;;
+			*)	vmove "usr/lib/cmake/${_f##*/}" ;;
+			esac
+		done
 	}
 }

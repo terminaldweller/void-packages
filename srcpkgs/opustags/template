@@ -1,16 +1,17 @@
 # Template file for 'opustags'
 pkgname=opustags
-version=1.6.0
+version=1.9.0
 revision=1
 build_style=cmake
 hostmakedepends="pkg-config"
 makedepends="libogg-devel"
 short_desc="Ogg Opus tags editor"
-maintainer="tibequadorian <tibequadorian@posteo.de>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="BSD-3-Clause"
 homepage="https://github.com/fmang/opustags"
+changelog="https://github.com/fmang/opustags/raw/master/CHANGELOG.md"
 distfiles="https://github.com/fmang/opustags/archive/${version}.tar.gz"
-checksum=0f82703a49b35d44503c53bb596129e89ec061fb1f6e82363f982d1e35377dce
+checksum=ea937f48a011bbacf37324c159149625c1ab66110e6d279693a92659bd38cf02
 
 post_install() {
 	vlicense LICENSE

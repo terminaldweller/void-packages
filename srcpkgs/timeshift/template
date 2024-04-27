@@ -1,20 +1,26 @@
 # Template file for 'timeshift'
 pkgname=timeshift
-version=22.06.1
+version=23.06.2
 revision=1
-build_style=gnu-makefile
-hostmakedepends="gettext pkg-config vala which"
-makedepends="libgee08-devel json-glib-devel gtk+3-devel vte3-devel libgirepository-devel"
-depends="rsync psmisc"
+build_style=meson
+hostmakedepends="gettext pkg-config vala help2man"
+makedepends="libgee-devel json-glib-devel vte3-devel libgirepository-devel
+ xapps-devel libxkbfile-devel"
+depends="rsync psmisc xhost"
 short_desc="System restore tool"
 maintainer="Orphaned <orphan@voidlinux.org>"
-license="GPL-3.0-or-later"
-homepage="https://teejeetech.com/timeshift/"
-distfiles="https://github.com/teejee2008/timeshift/archive/v${version}.tar.gz"
-checksum=aef3980c19dfde9084b47b4e04e5106489ee7ddf44e6228415d2521405a091ec
+license="GPL-3.0-only"
+homepage="https://github.com/linuxmint/timeshift"
+changelog="https://raw.githubusercontent.com/linuxmint/timeshift/master/debian/changelog"
+distfiles="https://github.com/linuxmint/timeshift/archive/${version}/timeshift-${version}.tar.gz"
+checksum=a88c947a70e850fcac11e34484bd9074ec48302998f9d734f579387b5b88eeaf
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends=${hostmakedepends%help2man}
+	configure_args="-Dman=false"
+fi
 
 # Remove hard-dep on crontab, leave up to user to decide
 post_extract() {
-	sed -i '/dependencies/s:"crontab",::' src/Core/Main.vala
-	sed -i 's:--thread:& Core/AppExcludeEntry.vala:' src/makefile
+	vsed -i src/Core/Main.vala -e '/dependencies/s:"crontab",::'
 }

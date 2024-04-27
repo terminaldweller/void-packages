@@ -1,6 +1,6 @@
 # Template file for 'xorg-server-xwayland'
 pkgname=xorg-server-xwayland
-version=22.1.8
+version=23.2.4
 revision=1
 build_style=meson
 configure_args="-Dipv6=true -Dxvfb=false -Dxdmcp=false -Dxcsecurity=true
@@ -12,11 +12,11 @@ makedepends="nettle-devel libepoxy-devel font-util libXfont2-devel pixman-devel
  MesaLib-devel libxcb-devel libxshmfence-devel libxcvt-devel"
 depends="xorg-server-common"
 short_desc="Nested X server that runs as a wayland client"
-maintainer="Michal Vasilek <michal@vasilek.cz>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="MIT"
 homepage="https://xorg.freedesktop.org"
-distfiles="https://gitlab.freedesktop.org/xorg/xserver/-/archive/xwayland-$version/xserver-xwayland-$version.tar.gz"
-checksum=7f51aa41f5ae588a5a8afebf29c19e76830a9f75bc4f0443974f012a42028c83
+distfiles="https://gitlab.freedesktop.org/xorg/xserver/-/archive/xwayland-${version}/xserver-xwayland-${version}.tar.gz"
+checksum=e23fb908c5699c9668cba478082f81d8b8fbc3f744f36821554aa087e4f92e36
 make_check=no # needs xtest repository
 
 post_install() {

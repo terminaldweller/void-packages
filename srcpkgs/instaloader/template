@@ -1,7 +1,7 @@
 # Template file for 'instaloader'
 pkgname=instaloader
-version=4.9
-revision=2
+version=4.11
+revision=1
 build_style=python3-module
 hostmakedepends="python3-setuptools"
 depends="python3-requests"
@@ -11,7 +11,7 @@ maintainer="fosslinux <fosslinux@aussies.space>"
 license="MIT"
 homepage="https://instaloader.github.io"
 distfiles="${PYPI_SITE}/i/instaloader/instaloader-${version}.tar.gz"
-checksum=7fa6147810eedcc1dedcdec8cfa1f220c9379ab8faeab6a336a7c181d944e2e4
+checksum=7478a1f0ed5c05911832c50cb19747243a461b5d434907f9fdb7d2d750d1b4f5
 
 post_install() {
 	vlicense LICENSE

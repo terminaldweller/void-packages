@@ -1,6 +1,6 @@
 # Template file for 'vhs'
 pkgname=vhs
-version=0.2.0
+version=0.7.2
 revision=1
 build_style=go
 build_helper=qemu
@@ -11,8 +11,9 @@ short_desc="Your CLI home video recorder"
 maintainer="Marcin Puc <tranzystorek.io@protonmail.com>"
 license="MIT"
 homepage="https://github.com/charmbracelet/vhs"
+changelog="https://github.com/charmbracelet/vhs/releases"
 distfiles="https://github.com/charmbracelet/vhs/archive/refs/tags/v${version}.tar.gz"
-checksum=3be752dafa1d5637cd3feb5ea72f9396d2ffb7d559a10eff26f430d4a7540689
+checksum=9be4b88a638336f6bba913f391b0300549280246e08d26cbd5053b63c60ee40c
 
 post_install() {
 	vdoc "${FILESDIR}/README.voidlinux"

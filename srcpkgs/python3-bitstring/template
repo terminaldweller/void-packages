@@ -1,16 +1,21 @@
 # Template file for 'python3-bitstring'
 pkgname=python3-bitstring
-version=3.1.7
-revision=4
-build_style=python3-module
-hostmakedepends="python3-setuptools"
-depends="python3"
+version=4.1.4
+revision=1
+build_style=python3-pep517
+hostmakedepends="python3-setuptools python3-wheel"
+depends="python3-bitarray"
+checkdepends="python3-bitarray"
 short_desc="Python module for creation and analysis of binary data"
 maintainer="Arjan Mossel <arjanmossel@gmail.com>"
 license="MIT"
-homepage="https://scott-griffiths.github.io/bitstring/"
+homepage="https://github.com/scott-griffiths/bitstring"
 distfiles="${PYPI_SITE}/b/bitstring/bitstring-${version}.tar.gz"
-checksum=fdf3eb72b229d2864fb507f8f42b1b2c57af7ce5fec035972f9566de440a864a
+checksum=94f3f1c45383ebe8fd4a359424ffeb75c2f290760ae8fcac421b44f89ac85213
+
+do_check() {
+	python -m unittest
+}
 
 post_install() {
 	vlicense LICENSE

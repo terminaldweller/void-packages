@@ -1,21 +1,28 @@
 # Template file for 'neochat'
 pkgname=neochat
-version=1.2.0
+version=23.08.5
 revision=1
 build_style=cmake
 hostmakedepends="extra-cmake-modules gettext pkg-config qt5-qmake
  qt5-host-tools kcoreaddons kconfig AppStream"
-makedepends="kdbusaddons-devel kquickimageeditor-devel libQuotient-devel
- qtkeychain-qt5-devel qt5-quickcontrols2-devel qt5-declarative-devel
- qt5-multimedia-devel qt5-svg-devel kirigami2-devel ki18n-devel cmark-devel
- knotifications-devel kconfig-devel kcoreaddons-devel qqc2-desktop-style-devel"
-depends="kquickimageeditor kitemmodels"
+makedepends="kquickimageeditor-devel libQuotient-devel qtkeychain-qt5-devel
+ qt5-multimedia-devel kirigami2-devel ki18n-devel cmark-devel
+ knotifications-devel kconfig-devel kcoreaddons-devel qqc2-desktop-style-devel
+ sonnet-devel kitemmodels-devel kirigami-addons kconfigwidgets-devel kio-devel
+ qcoro-qt5-devel olm-devel qt5-plugin-mysql qt5-plugin-odbc qt5-plugin-pgsql
+ qt5-plugin-sqlite qt5-plugin-tds"
+depends="kquickimageeditor kitemmodels kirigami2 kirigami-addons kquickcharts
+ qt5-location"
 short_desc="Client for matrix from KDE"
-maintainer="Justin Jagieniak <justin@jagieniak.net>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-3.0-only, GPL-3.0-or-later, GPL-2.0-or-later, BSD-2-Clause"
 homepage="https://apps.kde.org/en/neochat"
-distfiles="${KDE_SITE}/neochat/$version/neochat-$version.tar.xz"
-checksum=8ee4b5f61db7d43c902115e0be01f2b587100183b382596473922e9a42749de6
+distfiles="${KDE_SITE}/release-service/${version}/src/neochat-${version}.tar.xz"
+checksum=d300c6d8eb1dcc96b853c61a43e058ae923b939e3991755ddce1d9f210904632
+
+if [ "$CROSS_BUILD" ]; then
+	hostmakedepends+=" kdoctools"
+fi
 
 post_install() {
 	vlicense LICENSES/BSD-2-Clause.txt

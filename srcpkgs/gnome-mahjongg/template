@@ -1,14 +1,15 @@
 # Template file for 'gnome-mahjongg'
 pkgname=gnome-mahjongg
-version=3.38.3
+version=3.40.1
 revision=1
 build_style=meson
-configure_args="-Dcompile-schemas=disabled -Dupdate-icon-cache=disabled"
-hostmakedepends="gettext glib-devel itstool pkg-config vala"
-makedepends="librsvg-devel gtk+3-devel libglib-devel"
+hostmakedepends="gettext glib-devel itstool pkg-config vala
+ gtk4-update-icon-cache"
+makedepends="librsvg-devel libadwaita-devel"
 short_desc="GNOME Mahjongg solitaire game"
 maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-2.0-or-later"
 homepage="https://wiki.gnome.org/Apps/Mahjongg"
+changelog="https://gitlab.gnome.org/GNOME/gnome-mahjongg/-/raw/master/NEWS"
 distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=d2b1e47d85852048b35d89e3ddaba1daeb06aaf97acfb67a501ce664ff509190
+checksum=8ed54eecade36b08336906fd8e6c902a0d6f7bbbbb67653c23956a6b631223f6

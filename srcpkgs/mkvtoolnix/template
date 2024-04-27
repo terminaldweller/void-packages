@@ -1,7 +1,7 @@
 # Template file for 'mkvtoolnix'
 pkgname=mkvtoolnix
-version=73.0.0
-revision=1
+version=78.0
+revision=3
 build_style=gnu-configure
 build_helper=qmake
 configure_args="--with-docbook-xsl-root=/usr/share/xsl/docbook --enable-qt
@@ -16,8 +16,8 @@ maintainer="Matthias von Faber <mvf@gmx.eu>"
 license="GPL-2.0-only"
 homepage="https://mkvtoolnix.download"
 changelog="https://mkvtoolnix.download/doc/NEWS.md"
-distfiles="https://mkvtoolnix.download/sources/${pkgname}-${version}.tar.xz"
-checksum=f31a129723571b46a974bc5d57d73733c1245ee429afd6ddaf274038e94e2280
+distfiles="https://mkvtoolnix.download/sources/mkvtoolnix-${version}.tar.xz"
+checksum=6a50fce8c66c55410e0df2a6952f0bab7a3c92914db7feb285b9f1bb03fcd0d3
 
 if [ "$CROSS_BUILD" ]; then
 	configure_args+=" --with-boost=${XBPS_CROSS_BASE}/usr"

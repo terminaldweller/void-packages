@@ -1,18 +1,19 @@
 # Template file for 'xvfb-run'
 pkgname=xvfb-run
-version=21.1.4pl2
+version=21.1.7pl3
 revision=1
-create_wrksrc=yes
 depends="xorg-server-xvfb xauth"
 short_desc="Xvfb wrapper"
 maintainer="Érico Nogueira <ericonr@disroot.org>"
 license="GPL-2.0-or-later"
 homepage="https://salsa.debian.org/xorg-team/xserver/xorg-server"
 distfiles="${DEBIAN_SITE}/main/x/xorg-server/xorg-server_${version/pl/-}.diff.gz"
-checksum=55996059abde71b2c75d335cf1e9e1e8f39f6b50ee3edc50dd0e9fa11d5bd910
+checksum=c494b03743636de08f1994f9f7c323d8b817701e4fbfef4b02f705e8a110bb70
 
 post_extract() {
-	patch -Np1 -i "xorg-server_${version/pl/-}.diff"
+	PATH="/usr/libexec/chroot-git:$PATH"
+	git apply --include="debian/*" --whitespace=nowarn \
+		"xorg-server_${version/pl/-}.diff"
 }
 
 do_install() {

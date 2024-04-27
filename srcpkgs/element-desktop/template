@@ -1,24 +1,24 @@
 # Template file for 'element-desktop'
 pkgname=element-desktop
-version=1.11.20
+version=1.11.43
 revision=1
 create_wrksrc=yes
 conf_files="/etc/${pkgname}/config.json"
 hostmakedepends="git yarn nodejs rust cargo python3 curl
- sqlcipher-devel libappindicator-devel libnotify-devel pkg-config
+ sqlcipher-devel libnotify-devel pkg-config
  app-builder jq moreutils"
 makedepends="libsecret-devel"
 depends="c-ares ffmpeg gtk+3 http-parser libevent
- libxslt minizip nss re2 snappy sqlcipher electron19"
+ libxslt minizip nss re2 snappy sqlcipher electron24"
 short_desc="Glossy Matrix collaboration client, desktop version"
-maintainer="Jan Christian Grünhage <jan.christian@gruenhage.xyz>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="Apache-2.0"
 homepage="https://element.io"
 changelog="https://raw.githubusercontent.com/vector-im/element-desktop/develop/CHANGELOG.md"
 distfiles="https://github.com/vector-im/element-desktop/archive/v${version}.tar.gz>element-desktop-v${version}.tar.gz
  https://github.com/vector-im/element-web/archive/v${version}.tar.gz>element-web-v${version}.tar.gz"
-checksum="6f38aad3c28401a16d3a00830a309334ed4d64920a7d7feaf651b64c213c5d73
- 2c47aaf91de56cd2d0a488a0efe66b09e9d0ba472af2a506a87ce33eced0d662"
+checksum="9a090dad94096e57ceb6629f41650fbb70c3efb2d36a7354ec3902463495633e
+ c7395f14a7747ece79ade9ab1133e95abf9c35c73fa430220e4a5d8868cd5028"
 
 export USE_SYSTEM_APP_BUILDER=true
 

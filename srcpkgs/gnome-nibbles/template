@@ -1,15 +1,15 @@
 # Template file for 'gnome-nibbles'
 pkgname=gnome-nibbles
-version=3.38.2
+version=4.0.4
 revision=1
 build_style=meson
-hostmakedepends="gettext glib-devel itstool pkg-config vala"
-makedepends="clutter-gtk-devel gsound-devel libcanberra-devel
- libgnome-games-support-devel librsvg-devel"
+hostmakedepends="gettext glib-devel itstool pkg-config vala desktop-file-utils
+ gtk4-update-icon-cache"
+makedepends="gsound-devel libgnome-games-support2-devel"
 short_desc="GNOME snake eats diamonds game"
 maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-3.0-or-later"
 homepage="https://wiki.gnome.org/Apps/Nibbles"
 changelog="https://gitlab.gnome.org/GNOME/gnome-nibbles/-/raw/master/NEWS"
 distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=457a64b1c88e2d8d0143c452ffd01f0300d7d3005802954ef5abf9c896b353d9
+checksum=d712a4c6943bf32956adfb9222f1f14369911e54ecebb0cd61f7c25abd7a59da

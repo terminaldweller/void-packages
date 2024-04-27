@@ -1,7 +1,7 @@
 # Template file for 'mat2'
 pkgname=mat2
-version=0.13.1
-revision=1
+version=0.13.4
+revision=2
 build_style=python3-module
 hostmakedepends="python3-setuptools"
 depends="bubblewrap python3-cairo python3-gobject python3-mutagen poppler-glib
@@ -12,5 +12,9 @@ license="LGPL-3.0-or-later"
 homepage="https://0xacab.org/jvoisin/mat2"
 changelog="https://0xacab.org/jvoisin/mat2/-/raw/master/CHANGELOG.md"
 distfiles="https://0xacab.org/jvoisin/mat2/-/archive/${version}/mat2-${version}.tar.gz"
-checksum=473c56d60733a4434e10c85a86e928bd714f8f72a0b4772251cfa0a45f805e1d
+checksum=dbd30f33edd9b99042b3d9ec2b5e7e9c9a08bba4318bcf3fa63be8854cc871db
 make_check=no  # cannot bwrap in chroot
+
+post_install() {
+	vman doc/mat2.1
+}

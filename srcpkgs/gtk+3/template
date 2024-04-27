@@ -1,7 +1,7 @@
 # Template file for 'gtk+3'
 pkgname=gtk+3
-version=3.24.34
-revision=1
+version=3.24.41
+revision=2
 build_style=meson
 build_helper="gir"
 configure_args="
@@ -14,10 +14,11 @@ configure_args="
  $(vopt_bool gtk_doc)
  -Dman=true
  $(vopt_bool gir introspection)
+ -Dexamples=false
  "
 conf_files="/etc/gtk-3.0/im-multipress.conf"
-hostmakedepends="gettext-devel glib-devel gtk-doc gtk-update-icon-cache perl
- pkg-config $(vopt_if wayland 'wayland-devel wayland-protocols')"
+hostmakedepends="gettext-devel glib-devel gtk-doc perl pkg-config
+ gdk-pixbuf $(vopt_if wayland 'wayland-devel wayland-protocols')"
 makedepends="at-spi2-atk-devel gdk-pixbuf-devel libepoxy-devel pango-devel
  iso-codes $(vopt_if colord 'colord-devel') $(vopt_if cups 'cups-devel')
  $(vopt_if wayland 'libxkbcommon-devel wayland-devel wayland-protocols MesaLib-devel')
@@ -31,24 +32,19 @@ maintainer="Enno Boland <gottox@voidlinux.org>"
 license="LGPL-2.1-or-later"
 homepage="https://www.gtk.org/"
 distfiles="${GNOME_SITE}/gtk+/${version%.*}/gtk+-${version}.tar.xz"
-checksum=dbc69f90ddc821b8d1441f00374dc1da4323a2eafa9078e61edbe5eeefa852ec
-_broken_tests="
- a11y/scale-drawvalue
- a11y/menu
- a11y/menubutton
- a11y/menubutton2
- a11y/menubutton3
- a11y/tooltips
- reftests/button-wrapping.ui
- reftests/cellrenderer-pixbuf-stock-rtl.ui
- reftests/symbolic-icon-translucent-color.ui
- reftests/window-height-for-width.ui
- reftests/quit-mnemonic.ui
-"
+checksum=47da61487af3087a94bc49296fd025ca0bc02f96ef06c556e7c8988bd651b6fa
+make_check_pre="xvfb-run dbus-run-session"
+# _broken_tests=""
 
 case "$XBPS_TARGET_MACHINE" in
-	i686*) _broken_tests+=" gtk/cellarea" ;;
+	i686*) _broken_tests="reftests/linear-gradient.ui" ;;
 esac
+
+if [ "$XBPS_CHECK_PKGS" ]; then
+	configure_args+=" -Dtests=true"
+else
+	configure_args+=" -Dtests=false"
+fi
 
 # Package build options
 build_options="broadway colord cups gir cloudproviders wayland x11 gtk_doc"
@@ -66,21 +62,8 @@ pre_check() {
 		test_dir="testsuite/${t%\/*}"
 		test_name="${t##*\/}"
 
-		if [ "$test_dir" == "testsuite/gtk" ]; then
-			vsed -e "/'${test_name}'/d" -i "$test_dir/meson.build"
-		else
-			vsed -e "/'${test_name}',/d" -i "$test_dir/meson.build"
-		fi
+		vsed -e "/'${test_name}'/d" -i "${test_dir}/meson.build"
 	done
-}
-
-do_check() {
-	xvfb-run dbus-run-session ninja -C build ${makejobs} test
-}
-
-post_install() {
-	rm -f ${DESTDIR}/usr/bin/gtk-update-icon-cache
-	rm -f ${DESTDIR}/usr/share/man/man1/gtk-update-icon-cache.1
 }
 
 gtk+3-devel_package() {
@@ -104,13 +87,26 @@ gtk+3-demo_package() {
 	short_desc+=" - demonstration application"
 	pkg_install() {
 		vmove usr/bin/gtk3-demo
+		vmove usr/bin/gtk3-icon-browser
 		vmove usr/bin/gtk3-widget-factory
 		vmove usr/bin/gtk3-demo-application
+		vmove usr/share/man/man1/gtk3-demo.1
 		vmove usr/share/man/man1/gtk3-widget-factory.1
+		vmove usr/share/man/man1/gtk3-icon-browser.1
+		vmove usr/share/man/man1/gtk3-demo-application.1
 		vmove usr/share/gtk-3.0/gtkbuilder.rng
 		vmove usr/share/glib-2.0/schemas/org.gtk.Demo.gschema.xml
 		vmove usr/share/applications/gtk3-widget-factory.desktop
+		vmove usr/share/applications/gtk3-icon-browser.desktop
 		vmove usr/share/applications/gtk3-demo.desktop
 		vmove usr/share/icons
+	}
+}
+
+gtk-update-icon-cache_package() {
+	short_desc+=" - icon-cache update tool"
+	pkg_install() {
+		vmove usr/bin/gtk-update-icon-cache
+		vmove usr/share/man/man1/gtk-update-icon-cache.1
 	}
 }

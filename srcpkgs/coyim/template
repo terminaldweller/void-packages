@@ -1,17 +1,18 @@
 # Template file for 'coyim'
 pkgname=coyim
 version=0.4.1
-revision=1
+revision=3
 build_style=go
 go_import_path=github.com/coyim/coyim
 hostmakedepends="pkg-config"
 makedepends="gtk+3-devel"
 short_desc="Safe and secure XMPP chat client"
-maintainer="Illia Shestakov <ishestakov@airmail.cc>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-3.0-only"
 homepage="https://coy.im"
 distfiles="https://github.com/coyim/coyim/archive/v${version}.tar.gz"
 checksum=f2bf1e73562fbcc3a0b264a30f92dfe427dffe2046e9f44459087ecac5890098
+
 case "$XBPS_TARGET_MACHINE" in
 	x86_64*) ;;
 	*)
@@ -21,6 +22,5 @@ case "$XBPS_TARGET_MACHINE" in
 esac
 
 post_install() {
-	vlicense LICENSE
 	vdoc README.md
 }

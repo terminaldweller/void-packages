@@ -1,6 +1,6 @@
 # Template file for 'perl-Math-BigInt-GMP'
 pkgname=perl-Math-BigInt-GMP
-version=1.6011
+version=1.7001
 revision=1
 build_style=perl-module
 hostmakedepends="perl"
@@ -11,8 +11,8 @@ maintainer="Leah Neukirchen <leah@vuxu.org>"
 license="Artistic-1.0-Perl, GPL-1.0-or-later"
 homepage="https://metacpan.org/release/Math-BigInt-GMP"
 distfiles="${CPAN_SITE}/Math/Math-BigInt-GMP-${version}.tar.gz"
-checksum=e7ebec6dd43a76179afa8acd235478acb6ae3a085253933ef848af007ea6081f
+checksum=417581fdce63892e24f08279cdd6b065cb60c41d5acfa22dd2ad93b6d3e87071
 
-post_extract() {
+Xpost_extract() {
 	sed -i /check_lib_or/d Makefile.PL
 }

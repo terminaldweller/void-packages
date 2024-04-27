@@ -1,6 +1,6 @@
 # Template file for 'anope'
 pkgname=anope
-version=2.0.11
+version=2.0.15
 revision=1
 build_style=cmake
 make_cmd=make
@@ -13,7 +13,7 @@ license="GPL-2.0-only"
 homepage="https://www.anope.org/"
 changelog="https://raw.githubusercontent.com/anope/anope/2.0/docs/Changes"
 distfiles="https://github.com/anope/anope/archive/refs/tags/${version}.tar.gz"
-checksum=be4291e339deaa8017ba9a00e6f5cb16e1ab3f8e00eb7b5df2dc8fa5b03c7919
+checksum=389dd91ac02a523a48e357f64c5f536ad604adf3a819e5ecfea8c04ebd85857c
 
 system_accounts="_anope"
 make_dirs="

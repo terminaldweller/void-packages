@@ -1,12 +1,11 @@
 # Template file for 'libsoup'
 pkgname=libsoup
-version=2.74.0
+version=2.74.3
 revision=1
 build_style=meson
 build_helper="gir"
 configure_args="-Dgssapi=disabled -Dntlm=disabled -Dsysprof=disabled
- -Dtls_check=false -Dintrospection=$(vopt_if gir enabled disabled)
- -Dvapi=$(vopt_if gir enabled disabled)"
+ -Dtls_check=false $(vopt_feature gir introspection) $(vopt_feature gir vapi)"
 hostmakedepends="gettext-devel glib-devel pkg-config gettext
  $(vopt_if gir vala)"
 makedepends="libglib-devel libxml2-devel sqlite-devel libpsl-devel
@@ -17,8 +16,8 @@ maintainer="Enno Boland <gottox@voidlinux.org>"
 license="LGPL-2.1-or-later"
 homepage="https://wiki.gnome.org/Projects/libsoup"
 changelog="https://gitlab.gnome.org/GNOME/libsoup/-/raw/libsoup-2-74/NEWS"
-distfiles="${GNOME_SITE}/${pkgname}/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=33b1d4e0d639456c675c227877e94a8078d731233e2d57689c11abcef7d3c48e
+distfiles="${GNOME_SITE}/libsoup/${version%.*}/libsoup-${version}.tar.xz"
+checksum=e4b77c41cfc4c8c5a035fcdc320c7bc6cfb75ef7c5a034153df1413fa1d92f13
 make_check=no # gio tests can't run in chroot
 
 # Package build options
